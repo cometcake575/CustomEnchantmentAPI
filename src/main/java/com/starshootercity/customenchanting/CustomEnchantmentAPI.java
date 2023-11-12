@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CustomEnchantingAPI extends JavaPlugin {
-    private static CustomEnchantingAPI instance;
+public class CustomEnchantmentAPI extends JavaPlugin {
+    private static CustomEnchantmentAPI instance;
 
-    public static CustomEnchantingAPI getInstance() {
+    public static CustomEnchantmentAPI getInstance() {
         return instance;
     }
 

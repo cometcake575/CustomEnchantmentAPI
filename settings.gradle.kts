@@ -1,2 +1,2 @@
-rootProject.name = "CustomEnchantingAPI"
+rootProject.name = "CustomEnchantmentAPI"
 
