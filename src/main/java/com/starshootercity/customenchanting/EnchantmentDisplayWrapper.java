@@ -22,7 +22,7 @@ public class EnchantmentDisplayWrapper {
         String[] fullTranslationKey = enchantment.translationKey().split("\\.");
         sortKey = fullTranslationKey[fullTranslationKey.length - 1];
         displayName = Component.translatable(enchantment.translationKey())
-                .color(NamedTextColor.GRAY)
+                .color(enchantment.isCursed() ? NamedTextColor.RED : NamedTextColor.GRAY)
                 .decoration(TextDecoration.ITALIC, false);
         if (enchantment.getMaxLevel() > 1) displayName = displayName.append(Component.text(" %s".formatted(toRoman(level))));
 
