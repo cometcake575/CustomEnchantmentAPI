@@ -1,7 +1,6 @@
 package com.starshootercity.customenchanting;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.enchantments.Enchantment;
@@ -12,7 +11,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CustomEnchantmentAPI extends JavaPlugin {
@@ -25,14 +23,20 @@ public class CustomEnchantmentAPI extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        enchantmentContainerKey = new NamespacedKey(this, "custom-enchantments");;
-        PluginCommand command = getCommand("test");
-        if (command != null) command.setExecutor(new EnchantmentDisplay());
+        enchantmentContainerKey = new NamespacedKey(this, "custom-enchantments");
+        PluginCommand updateCommand = getCommand("update");
+        PluginCommand enchantCommand = getCommand("custom-enchant");
+        PluginCommand forceEnchantCommand = getCommand("force-enchant");
+        new EnchantmentCommands() {{
+            if (updateCommand != null) updateCommand.setExecutor(this);
+            if (enchantCommand != null) enchantCommand.setExecutor(this);
+            if (forceEnchantCommand != null) forceEnchantCommand.setExecutor(this);
+        }};
         new CustomEnchantment(Component.translatable("Hello"), new NamespacedKey(this, "hello"), 1);
     }
 
-    public void registerEnchantment(CustomEnchantment enchantment, List<Material> appliesTo) {
-
+    public void registerEnchantment(CustomEnchantment enchantment) {
+        enchantmentMap.put(enchantment.getKey(), enchantment);
     }
 
     private static NamespacedKey enchantmentContainerKey;
@@ -68,7 +72,7 @@ public class CustomEnchantmentAPI extends JavaPlugin {
         Map<CustomEnchantment, Integer> enchantments = new HashMap<>();
 
         for (NamespacedKey key : enchantmentContainer.getKeys()) {
-            CustomEnchantment enchantment = CustomEnchantment.getEnchantmentByKey(key);
+            CustomEnchantment enchantment = CustomEnchantmentAPI.getEnchantmentByKey(key);
             enchantments.put(enchantment, getCustomEnchantmentLevel(itemStack, enchantment));
         }
 
@@ -94,4 +98,10 @@ public class CustomEnchantmentAPI extends JavaPlugin {
         }
         return false;
     }
+
+    protected static final Map<NamespacedKey, CustomEnchantment> enchantmentMap = new HashMap<>();
+    public static CustomEnchantment getEnchantmentByKey(NamespacedKey key) {
+        return enchantmentMap.get(key);
+    }
+
 }

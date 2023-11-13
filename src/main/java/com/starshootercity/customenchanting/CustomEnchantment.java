@@ -9,9 +9,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static com.starshootercity.customenchanting.CustomEnchantmentAPI.enchantmentMap;
 
 public class CustomEnchantment {
     private final Component displayName;
@@ -30,7 +30,8 @@ public class CustomEnchantment {
         conflictingEnchantments.add(enchantment);
     }
 
-    public boolean canBeApplied(ItemStack itemStack) {
+    public boolean canEnchantItem(ItemStack itemStack) {
+        if (itemStack.getType() == Material.AIR) return false;
         if (CustomEnchantmentAPI.conflictsWith(itemStack, this)) return false;
         for (EnchantableMaterial material : enchantableMaterials) {
             if (material.matches(itemStack)) return true;
@@ -52,11 +53,6 @@ public class CustomEnchantment {
 
     public boolean conflictsWith(Enchantment enchantment) {
         return conflictingEnchantments.contains(enchantment);
-    }
-
-    private static final Map<NamespacedKey, CustomEnchantment> enchantmentMap = new HashMap<>();
-    public static CustomEnchantment getEnchantmentByKey(NamespacedKey key) {
-        return enchantmentMap.get(key);
     }
 
     public Component getDisplayName() {

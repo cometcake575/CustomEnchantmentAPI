@@ -19,3 +19,7 @@ commands:
     description: Apply a custom enchantment to an item
     permission: customenchantment.admin
     usage: /<command> <enchantment> [<level>]
+  force-enchant:
+    description: Force apply a custom enchantment to an item
+    permission: customenchantment.admin
+    usage: /<command> <enchantment> [<level>]
