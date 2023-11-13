@@ -5,7 +5,17 @@ description: Custom Enchanting API for Paper plugins
 api-version: '1.20'
 author: cometcake575
 
+permissions:
+  customenchantment.admin:
+    default: op
+    description: Admin custom enchantment commands
+
 commands:
-  test:
-    description: Test
+  update:
+    description: Update the enchantment display of your held item
+    permission: customenchantment.admin
     usage: /<command>
+  custom-enchant:
+    description: Apply a custom enchantment to an item
+    permission: customenchantment.admin
+    usage: /<command> <enchantment> [<level>]
