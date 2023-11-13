@@ -1,5 +1,5 @@
 name: CustomEnchantmentAPI
-version: 1.0.0
+version: 0.0.1
 main: com.starshootercity.customenchanting.CustomEnchantmentAPI
 description: Custom Enchanting API for Paper plugins
 api-version: '1.20'
