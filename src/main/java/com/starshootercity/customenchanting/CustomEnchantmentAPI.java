@@ -75,7 +75,7 @@ public class CustomEnchantmentAPI extends JavaPlugin {
         return enchantments;
     }
 
-    public boolean conflictsWith(ItemStack itemStack, Enchantment enchantment) {
+    public static boolean conflictsWith(ItemStack itemStack, Enchantment enchantment) {
         for (CustomEnchantment otherEnchantment : getCustomEnchantments(itemStack).keySet()) {
             if (otherEnchantment.conflictsWith(enchantment)) return true;
         }
@@ -85,7 +85,7 @@ public class CustomEnchantmentAPI extends JavaPlugin {
         return false;
     }
 
-    public boolean conflictsWith(ItemStack itemStack, CustomEnchantment enchantment) {
+    public static boolean conflictsWith(ItemStack itemStack, CustomEnchantment enchantment) {
         for (CustomEnchantment otherEnchantment : getCustomEnchantments(itemStack).keySet()) {
             if (enchantment.conflictsWith(otherEnchantment)) return true;
         }
