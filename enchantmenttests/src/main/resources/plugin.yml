@@ -1,0 +1,9 @@
+name: CustomEnchantmentExamples
+version: 1.0.0
+main: com.starshootercity.customenchanting.CustomEnchantmentExamples
+description: Custom Enchanting API examples for the CustomEnchantmentAPI
+api-version: '1.20'
+author: cometcake575
+
+depend:
+  - CustomEnchantmentAPI

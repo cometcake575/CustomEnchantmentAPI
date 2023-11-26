@@ -35,7 +35,7 @@ public class EnchantmentDisplay {
         if (CustomEnchantmentAPI.getCustomEnchantments(itemStack).size() > 0) {
             if (itemStack.getType() == Material.FISHING_ROD) {
                 itemStack.addUnsafeEnchantment(Enchantment.WATER_WORKER, 1);
-            } else itemStack.addUnsafeEnchantment(Enchantment.LURE, 1);
+            } else if (itemStack.getType() != Material.ENCHANTED_BOOK) itemStack.addUnsafeEnchantment(Enchantment.LURE, 1);
         }
         if (itemStack.getEnchantments().size() > 0 || CustomEnchantmentAPI.getCustomEnchantments(itemStack).size() > 0) {
             itemStack.addItemFlags(ItemFlag.HIDE_ENCHANTS);

@@ -1,5 +1,6 @@
 package com.starshootercity.customenchanting;
 
+import io.papermc.paper.enchantments.EnchantmentRarity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -17,9 +18,16 @@ public class CustomEnchantment {
     private final Component displayName;
     private final int maxLevel;
     private final NamespacedKey key;
+    private final EnchantmentRarity rarity;
     private final List<CustomEnchantment> conflictingCustomEnchantments = new ArrayList<>();
     private final List<Enchantment> conflictingEnchantments = new ArrayList<>();
-    List<EnchantableMaterial> enchantableMaterials = new ArrayList<>();
+    List<EnchantableMaterial> enchantableMaterials = new ArrayList<>() {{
+        add(new EnchantableMaterial(Material.ENCHANTED_BOOK));
+    }};
+
+    public EnchantmentRarity getRarity() {
+        return rarity;
+    }
 
     public void addConflict(CustomEnchantment enchantment) {
         conflictingCustomEnchantments.add(enchantment);
@@ -65,20 +73,24 @@ public class CustomEnchantment {
 
     public CustomEnchantment(Component displayName,
                              NamespacedKey key,
-                             int maxLevel) {
+                             int maxLevel,
+                             EnchantmentRarity rarity
+    ) {
         this.displayName = displayName;
         this.maxLevel = maxLevel;
         this.key = key;
-        enchantmentMap.put(key, this);
+        this.rarity = rarity;
     }
     public CustomEnchantment(String displayName,
                              NamespacedKey key,
-                             int maxLevel) {
+                             int maxLevel,
+                             EnchantmentRarity rarity) {
         this(Component.text(displayName)
                 .color(NamedTextColor.GRAY)
                 .decoration(TextDecoration.ITALIC, false),
                 key,
-                maxLevel);
+                maxLevel,
+                rarity);
     }
 
     public int getMaxLevel() {

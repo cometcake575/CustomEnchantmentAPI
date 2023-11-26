@@ -2,6 +2,7 @@ package com.starshootercity.customenchanting;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,20 +20,23 @@ public class EnchantmentCommands implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player player) {
+            ItemStack item = player.getInventory().getItemInMainHand();
+            if (item.getType() == Material.AIR) {
+                return true;
+            }
             if (command.getName().equals("update")) {
-                EnchantmentDisplay.updateEnchantmentDisplay(player.getInventory().getItemInMainHand());
+                EnchantmentDisplay.updateEnchantmentDisplay(item);
             } else {
                 int level;
                 if (args.length == 1) {
                     level = 1;
                 } else if (args.length == 2) {
-                    if (!args[1].matches("%d+")) return false;
+                    if (!args[1].matches("\\d+")) return false;
                     level = Integer.parseInt(args[1]);
                 } else return false;
                 String key = args[0];
                 for (NamespacedKey enchantmentKey : CustomEnchantmentAPI.enchantmentMap.keySet()) {
                     if (enchantmentKey.toString().equals(key)) {
-                        ItemStack item = player.getInventory().getItemInMainHand();
                         CustomEnchantment enchantment = CustomEnchantmentAPI.getEnchantmentByKey(enchantmentKey);
                         if (!enchantment.canEnchantItem(item) && command.getName().equals("custom-enchant")) {
                             player.sendMessage(

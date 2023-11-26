@@ -1,16 +1,23 @@
 package com.starshootercity.customenchanting;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.loot.LootTable;
+import org.bukkit.loot.LootTables;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Range;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CustomEnchantmentAPI extends JavaPlugin {
@@ -23,6 +30,7 @@ public class CustomEnchantmentAPI extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        saveDefaultConfig();
         enchantmentContainerKey = new NamespacedKey(this, "custom-enchantments");
         PluginCommand updateCommand = getCommand("update");
         PluginCommand enchantCommand = getCommand("custom-enchant");
@@ -32,12 +40,35 @@ public class CustomEnchantmentAPI extends JavaPlugin {
             if (enchantCommand != null) enchantCommand.setExecutor(this);
             if (forceEnchantCommand != null) forceEnchantCommand.setExecutor(this);
         }};
-        new CustomEnchantment(Component.translatable("Hello"), new NamespacedKey(this, "hello"), 1);
+        Bukkit.getPluginManager().registerEvents(new VillagerEnchantmentListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PiglinBookListener(), this);
+        Bukkit.getPluginManager().registerEvents(new EnchantingTableListener(), this);
+        Bukkit.getPluginManager().registerEvents(new AnvilCombineListener(), this);
+        Bukkit.getPluginManager().registerEvents(new GrindstoneListener(), this);
     }
 
-    public void registerEnchantment(CustomEnchantment enchantment) {
+    public static void registerEnchantment(
+            CustomEnchantment enchantment,
+            Map<Villager.Type, List<@Range(from = 1, to = 5) Integer>> villagerEnchants,
+            @Range(from = 0, to = 1) double piglinChance,
+            @Range(from = 0, to = 30) int enchantingTableReplacementLevelLower,
+            @Range(from = 0, to = 30) int enchantingTableReplacementLevelUpper,
+            @Range(from = 0, to = 1) double enchantingTableReplacementChance,
+            boolean removableByGrindstones
+            ) {
         enchantmentMap.put(enchantment.getKey(), enchantment);
+        villagerEnchantments.put(enchantment.getKey(), villagerEnchants);
+        piglinEnchantments.put(enchantment.getKey(), piglinChance);
+        removableByGrindstoneEnchants.add(enchantment.getKey());
+        tableEnchantmentLevelRange.put(enchantment.getKey(), new Integer[]{enchantingTableReplacementLevelLower, enchantingTableReplacementLevelUpper});
+        tableEnchantmentReplacementChance.put(enchantment.getKey(), enchantingTableReplacementChance);
     }
+
+    private static final Map<NamespacedKey, Map<Villager.Type, List<@Range(from = 1, to = 5) Integer>>> villagerEnchantments = new HashMap<>();
+    private static final Map<NamespacedKey, Integer[]> tableEnchantmentLevelRange = new HashMap<>();
+    private static final List<NamespacedKey> removableByGrindstoneEnchants = new ArrayList<>();
+    private static final Map<NamespacedKey, Double> tableEnchantmentReplacementChance = new HashMap<>();
+    private static final Map<NamespacedKey, Double> piglinEnchantments = new HashMap<>();
 
     private static NamespacedKey enchantmentContainerKey;
 

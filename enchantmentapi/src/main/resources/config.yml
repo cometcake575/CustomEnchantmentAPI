@@ -1,0 +1,4 @@
+# The maximum cost for anvil combining
+# Set this to 39 or below to disable "Too Expensive"
+# Keep this at -1 for vanilla behaviour
+max-cost: -1
