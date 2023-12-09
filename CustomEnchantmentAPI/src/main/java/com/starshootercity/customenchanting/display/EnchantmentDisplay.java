@@ -1,37 +1,42 @@
-package com.starshootercity.customenchanting;
+package com.starshootercity.customenchanting.display;
 
+import com.starshootercity.customenchanting.CustomEnchantment;
+import com.starshootercity.customenchanting.CustomEnchantmentAPI;
+import com.starshootercity.customenchanting.wrappers.BukkitEnchantmentWrapper;
+import com.starshootercity.customenchanting.wrappers.CustomEnchantmentWrapper;
+import com.starshootercity.customenchanting.wrappers.EnchantmentWrapper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EnchantmentDisplay {
     public static void updateEnchantmentDisplay(ItemStack itemStack) {
         if (itemStack.getType() == Material.AIR) return;
         List<Component> lore = new ArrayList<>();
-        List<EnchantmentDisplayWrapper> enchantmentDisplayWrappers = new ArrayList<>();
+        Map<EnchantmentWrapper, Integer> enchantmentWrappers = new HashMap<>();
         for (Enchantment enchantment : itemStack.getEnchantments().keySet()) {
             if (enchantment.canEnchantItem(itemStack)) {
-                enchantmentDisplayWrappers.add(new EnchantmentDisplayWrapper(enchantment, itemStack.getEnchantmentLevel(enchantment)));
+                enchantmentWrappers.put(new BukkitEnchantmentWrapper(enchantment), itemStack.getEnchantmentLevel(enchantment));
             }
         }
         Map<CustomEnchantment, Integer> customEnchantments = CustomEnchantmentAPI.getCustomEnchantments(itemStack);
         for (CustomEnchantment customEnchantment : customEnchantments.keySet()) {
-            enchantmentDisplayWrappers.add(new EnchantmentDisplayWrapper(customEnchantment, customEnchantments.get(customEnchantment)));
+            enchantmentWrappers.put(new CustomEnchantmentWrapper(customEnchantment), customEnchantments.get(customEnchantment));
         }
-        enchantmentDisplayWrappers.sort(Comparator.comparing(EnchantmentDisplayWrapper::getSortKey));
-        for (EnchantmentDisplayWrapper wrapper : enchantmentDisplayWrappers) {
-            lore.add(wrapper.getDisplayName());
+        List<EnchantmentWrapper> wrappers = new ArrayList<>(enchantmentWrappers.keySet());
+        wrappers.sort(Comparator.comparing(EnchantmentWrapper::getSortKey));
+        for (EnchantmentWrapper wrapper : wrappers) {
+            lore.add(wrapper.getDisplayName(enchantmentWrappers.get(wrapper)));
         }
-        if (lore.size() > 0) {
-            itemStack.lore(lore);
+        List<Component> customLore = CustomEnchantmentAPI.getLore(itemStack);
+        if (customLore != null) {
+            lore.addAll(customLore);
         }
+        itemStack.lore(lore.size() == 0 ? null : lore);
         if (CustomEnchantmentAPI.getCustomEnchantments(itemStack).size() > 0) {
             if (itemStack.getType() == Material.FISHING_ROD) {
                 itemStack.addUnsafeEnchantment(Enchantment.WATER_WORKER, 1);

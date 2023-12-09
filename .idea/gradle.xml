@@ -9,8 +9,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/enchantmentapi" />
-            <option value="$PROJECT_DIR$/enchantmenttests" />
+            <option value="$PROJECT_DIR$/CustomEnchantmentAPI" />
+            <option value="$PROJECT_DIR$/CustomEnchantmentTests" />
           </set>
         </option>
       </GradleProjectSettings>

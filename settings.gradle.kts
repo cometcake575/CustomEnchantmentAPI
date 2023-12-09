@@ -1,3 +1,3 @@
-rootProject.name = "CustomEnchantmentAPI"
-include("enchantmentapi")
-include("enchantmenttests")
+rootProject.name = "CustomEnchanting"
+include("CustomEnchantmentAPI")
+include("CustomEnchantmentTests")

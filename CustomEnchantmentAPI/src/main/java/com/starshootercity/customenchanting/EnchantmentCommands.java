@@ -1,5 +1,6 @@
 package com.starshootercity.customenchanting;
 
+import com.starshootercity.customenchanting.display.EnchantmentDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -46,7 +47,7 @@ public class EnchantmentCommands implements CommandExecutor, TabCompleter {
                             );
                             return true;
                         }
-                        if (enchantment.getMaxLevel() < level && command.getName().equals("custom-enchant")) {
+                        if (enchantment.getMaxLevel() <= level && command.getName().equals("custom-enchant")) {
                             player.sendMessage(
                                     Component.text("%s is higher than the maximum level of %s supported by that enchantment"
                                                     .formatted(level, enchantment.getMaxLevel()))
@@ -73,8 +74,10 @@ public class EnchantmentCommands implements CommandExecutor, TabCompleter {
         List<String> enchantments = new ArrayList<>();
         if (command.getName().equals("custom-enchant") || command.getName().equals("force-enchant")) {
             if (sender instanceof Player player) {
+                ItemStack item = player.getInventory().getItemInMainHand();
+                if (item.getType() == Material.AIR) return null;
                 for (NamespacedKey enchantmentKey : CustomEnchantmentAPI.enchantmentMap.keySet()) {
-                    if (CustomEnchantmentAPI.getEnchantmentByKey(enchantmentKey).canEnchantItem(player.getInventory().getItemInMainHand()) || command.getName().equals("force-enchant")) {
+                    if (CustomEnchantmentAPI.getEnchantmentByKey(enchantmentKey).canEnchantItem(item) || command.getName().equals("force-enchant")) {
                         enchantments.add(enchantmentKey.toString());
                     }
                 }

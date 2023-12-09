@@ -1,5 +1,6 @@
 package com.starshootercity.customenchanting;
 
+import com.starshootercity.customenchanting.villagers.VillagerEnchantmentChooser;
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -7,12 +8,11 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.starshootercity.customenchanting.CustomEnchantmentAPI.enchantmentMap;
 
 public class CustomEnchantment {
     private final Component displayName;
@@ -21,9 +21,7 @@ public class CustomEnchantment {
     private final EnchantmentRarity rarity;
     private final List<CustomEnchantment> conflictingCustomEnchantments = new ArrayList<>();
     private final List<Enchantment> conflictingEnchantments = new ArrayList<>();
-    List<EnchantableMaterial> enchantableMaterials = new ArrayList<>() {{
-        add(new EnchantableMaterial(Material.ENCHANTED_BOOK));
-    }};
+    private final VillagerEnchantmentChooser.ChoiceData choiceData;
 
     public EnchantmentRarity getRarity() {
         return rarity;
@@ -39,24 +37,30 @@ public class CustomEnchantment {
     }
 
     public boolean canEnchantItem(ItemStack itemStack) {
-        if (itemStack.getType() == Material.AIR) return false;
-        if (CustomEnchantmentAPI.conflictsWith(itemStack, this)) return false;
-        for (EnchantableMaterial material : enchantableMaterials) {
-            if (material.matches(itemStack)) return true;
-        }
-        return false;
+        if (CustomEnchantmentAPI.containsEnchantment(itemStack, this)) return false;
+        return target.includes(itemStack) || itemStack.getType() == Material.ENCHANTED_BOOK;
     }
 
-    public void addCompatibleItem(Material material) {
-        enchantableMaterials.add(new EnchantableMaterial(material));
-    }
-
-    public void addCompatibleItem(EnchantableMaterial material) {
-        enchantableMaterials.add(material);
-    }
+    private final EnchantmentTarget target;
 
     public boolean conflictsWith(CustomEnchantment enchantment) {
         return conflictingCustomEnchantments.contains(enchantment);
+    }
+
+    private final boolean treasure;
+    private final boolean cursed;
+    private final boolean piglin;
+
+    public boolean isCursed() {
+        return cursed;
+    }
+
+    public boolean isTreasure() {
+        return treasure;
+    }
+
+    public boolean isPiglin() {
+        return piglin;
     }
 
     public boolean conflictsWith(Enchantment enchantment) {
@@ -71,26 +75,49 @@ public class CustomEnchantment {
         return key;
     }
 
+    public VillagerEnchantmentChooser.ChoiceData getChoiceData() {
+        return choiceData;
+    }
+
     public CustomEnchantment(Component displayName,
                              NamespacedKey key,
                              int maxLevel,
-                             EnchantmentRarity rarity
-    ) {
+                             boolean treasure,
+                             boolean piglin,
+                             boolean cursed,
+                             VillagerEnchantmentChooser.ChoiceData choiceData,
+                             EnchantmentRarity rarity,
+                             EnchantmentTarget target) {
         this.displayName = displayName;
         this.maxLevel = maxLevel;
         this.key = key;
         this.rarity = rarity;
+        this.target = target;
+        this.treasure = treasure;
+        this.cursed = cursed;
+        this.piglin = piglin;
+        this.choiceData = choiceData;
     }
     public CustomEnchantment(String displayName,
                              NamespacedKey key,
                              int maxLevel,
-                             EnchantmentRarity rarity) {
+                             boolean treasure,
+                             boolean piglin,
+                             boolean cursed,
+                             VillagerEnchantmentChooser.ChoiceData choiceData,
+                             EnchantmentRarity rarity,
+                             EnchantmentTarget target) {
         this(Component.text(displayName)
-                .color(NamedTextColor.GRAY)
+                .color(cursed ? NamedTextColor.RED : NamedTextColor.GRAY)
                 .decoration(TextDecoration.ITALIC, false),
                 key,
                 maxLevel,
-                rarity);
+                treasure,
+                piglin,
+                cursed,
+                choiceData,
+                rarity,
+                target);
     }
 
     public int getMaxLevel() {
