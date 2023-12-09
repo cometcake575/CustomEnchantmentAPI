@@ -88,7 +88,6 @@ public class AnvilCombineListener implements Listener {
             if (CustomEnchantmentAPI.containsEnchantment(firstItem, e)) continue;
             if (CustomEnchantmentAPI.conflictsWith(firstItem, e)) incompatibleCount++;
         }
-        Bukkit.broadcast(Component.text(incompatibleCount));
         int cost = getValueForSacrificing(secondItem, firstItem) + getWorkPenalty(firstItem) + getWorkPenalty(secondItem) + (isBeingRenamed ? 1 : 0) + (isBeingFixed ? 2 : 0) + incompatibleCount;
 
         int maxCost = CustomEnchantmentAPI.getInstance().getConfig().getInt("max-cost");
