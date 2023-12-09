@@ -5,7 +5,6 @@ import com.starshootercity.customenchanting.CustomEnchantmentAPI;
 import com.starshootercity.customenchanting.display.EnchantmentDisplay;
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
